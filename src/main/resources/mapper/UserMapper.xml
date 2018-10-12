@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxk.shiro.dao.UserMapper">
+
+    <!--
+        这里返回的是一个UserDTO对象,property设置的是返回对象的属性,
+        而column对应的是在数据查询时所需要的属性,对应user表的id
+    -->
+    <resultMap id="userDTOMapper" type="UserDTO">
+        <id property="userId" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <!--角色集合-->
+        <collection property="roleList" ofType="Role">
+            <id property="roleId" column="role_id"/>
+            <result property="roleName" column="role_name"/>
+        </collection>
+        <!--权限集合-->
+        <collection property="permissionList" ofType="Permission">
+            <id property="permissionId" column="permission_id"/>
+            <result property="resource" column="resource"/>
+            <result property="permissionCode" column="permission_code"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="User" type="com.gxk.shiro.POJO.DO.User">
+        <id property="userId" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+    </resultMap>
+
+    <sql id="listUserDTO">
+        SELECT user.*,
+               role.id AS role_id,
+               role.role_name,
+               permission.id AS permission_id,
+               permission.resource,
+               permission.permission_code
+        FROM user
+                 JOIN user_role ON user.id = user_id
+                 JOIN role ON user_role.role_id = role.id
+                 JOIN role_permission ON role.id = role_permission.role_id
+                 JOIN permission ON role_permission.permission_id = permission.id
+    </sql>
+
+    <select id="loginByUser" resultMap="User">
+        SELECT id, username, password FROM user
+        WHERE id = #{userId} AND password = #{password}
+    </select>
+
+    <select id="findUserDTOByUserId" resultMap="userDTOMapper">
+        <include refid="listUserDTO"/>
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>

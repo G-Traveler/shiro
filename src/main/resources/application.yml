@@ -1,0 +1,15 @@
+#server:
+#  servlet:
+#    context-path: /shiro
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: admin
+
+mybatis:
+  mapperLocations: classpath:/mapper/*.xml
+  type-aliases-package: com.gxk.shiro.POJO.DO, com.gxk.shiro.POJO.VO, com.gxk.shiro.POJO.DTO
+  configuration:
+    map-underscore-to-camel-case: true
